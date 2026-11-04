@@ -1,160 +1,151 @@
-# Efetivo CM — Painel de Gestão e Dashboard do Efetivo Casa Militar (Arquitetura Cliente-Servidor)
 
-Aplicação web e servidor local Express em Node.js para gestão, consulta e visualização analítica do efetivo da Casa Militar do Governo do Estado do Paraná.
+# Public Safety Workforce Governance & Tactical Readiness Dashboard
+### Painel de Gestão e Análise Operacional do Efetivo — Casa Militar da Governadoria
 
----
-
-## 🏛️ Arquitetura Cliente-Servidor (Hospedagem Local & Rede Interna)
-
-A aplicação foi adaptada para rodar localmente ou em um servidor da rede interna (Windows Server ou Linux):
-
-- **Frontend (Cliente)**: Interface SPA reativa desenvolvida em React 19, Vite, Tailwind CSS, Recharts, Lucide Icons e Motion.
-- **Backend (Servidor)**: Servidor REST em **Node.js com Express**.
-  - **Acesso na Rede Interna**: O servidor escuta no host `0.0.0.0` e porta `3000`, permitindo o acesso via `http://localhost:3000` e também pelo IP do servidor na rede local (ex: `http://192.168.1.100:3000`).
-  - **Sincronização com Google Drive**: Conexão nativa via Google Drive API v3 e Sheets API v4 utilizando Conta de Serviço (Service Account JWT).
-  - **Sincronização Automática a cada 10 Minutos**: Um job em segundo plano busca atualizações do arquivo configurado no Google Drive a cada 10 minutos (`600.000 ms`).
-  - **Cache Local na Memória e em Disco**: Evita requisições desnecessárias à API do Google Drive retornando os dados armazenados em cache local (`src/data/efetivo.json`).
-  - **Autenticação e Lista VIP**: Validação via Google OAuth 2.0 (Google Sign-In / Identity Services). O acesso às rotas da API e ao painel é liberado exclusivamente para e-mails cadastrados na lista de usuários autorizados (`ALLOWED_EMAILS` ou lista VIP interna).
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Frontend: React 19](https://img.shields.io/badge/Frontend-React%2019%20%7C%20Vite%20%7C%20Tailwind-blue)](https://react.dev/)
+[![Backend: Node.js Express](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express%20%7C%20TypeScript-green)](https://nodejs.org/)
+[![Cloud & APIs: Google Cloud](https://img.shields.io/badge/Integrations-Google%20Drive%20%26%20Sheets%20API-orange)](https://cloud.google.com/)
+[![AI Engine: Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini%20API-blueviolet)](https://deepmind.google/technologies/gemini/)
 
 ---
 
-## 📁 Estrutura Completa do Projeto
+## 📌 Visão Geral / Executive Overview
+
+**EN:** A full-stack, client-server web application and analytics platform engineered for strategic personnel management, tactical readiness tracking, and operational shift governance at the Military House (Casa Militar) of the State Government of Paraná. Powered by **React 19**, **Node.js/Express**, **Google Workspace APIs**, and **Google Gemini AI**, the system streamlines troop readiness, prevents operational fatigue, and enables conversational data intelligence.
+
+**PT:** Aplicação web *full-stack* (cliente-servidor) voltada à gestão analítica, governança de escalas e prontidão operacional do efetivo da Casa Militar da Governadoria do Paraná. Desenvolvida com **React 19**, **Node.js/Express**, integrações nativas com **Google Drive/Sheets API** e inteligência artificial **Google Gemini**, a plataforma elimina retrabalho burocrático e acelera a tomada de decisão estratégica do comando.
+
+---
+
+## 🏛️ Arquitetura de Software e Tecnologias / System Architecture
 
 ```text
-├── server.ts                # Backend Express (Autenticação, Sincronização Google Drive, Cache, API REST e Servidor de Arquivos)
-├── index.html               # Ponto de entrada do Frontend
-├── package.json             # Dependências Node.js e scripts NPM
-├── .env.example             # Modelo com variáveis de ambiente do servidor
-├── .env                     # Variáveis de ambiente locais (Chaves de API, OAuth, Service Account, Emails)
-├── firebase-applet-config.json # Configuração de referência do applet
-├── vite.config.ts           # Configuração de compilação do Vite
-├── tsconfig.json            # Configurações do TypeScript
-├── src/
-│   ├── main.tsx             # Ponto de entrada React
-│   ├── router.tsx           # Roteamento TanStack Router
-│   ├── routes/              # Páginas e rotas da aplicação
-│   ├── components/          # Componentes visuais do Dashboard (Filtros, Tabelas, Gráficos, Chat IA)
-│   └── data/
-│       └── efetivo.json     # Cache local do efetivo
-└── dist/                    # Build de produção gerado pelo `npm run build` (contém `server.cjs` e frontend estático)
+├── Frontend (Client SPA)    : React 19, Vite, TanStack Router, Tailwind CSS, Recharts, Lucide Icons, Motion
+├── Backend (REST Server)    : Node.js, Express, TypeScript (server.ts -> dist/server.cjs)
+├── Data Integration / ETL   : Google Drive API v3 & Sheets API v4 (Service Account JWT authentication)
+├── Resilience & Caching     : Dual-layer cache (In-Memory + Local JSON Disk Cache with 10-min auto-sync)
+├── Security & Access        : Google OAuth 2.0 (Identity Services) + Institutional Whitelist (ALLOWED_EMAILS)
+├── Generative AI Assistant  : Native integration with Google Gemini API (/api/chat endpoint)
+└── Deployment & DevOps      : Host 0.0.0.0:3000, Linux systemd daemon (efetivo-cm.service) / Windows PM2
 ```
 
 ---
 
-## 🔑 Configuração de Variáveis de Ambiente (`.env`)
+## 📁 Estrutura de Diretórios / Directory Structure
 
-Crie ou edite o arquivo `.env` na raiz do projeto conforme a estrutura do `.env.example`:
+```text
+├── server.ts                   # Backend Express (Autenticação, Sincronização Google, Cache e API REST)
+├── index.html                  # Ponto de entrada SPA (Frontend)
+├── package.json                # Dependências Node.js e scripts NPM
+├── .env.example                # Template de variáveis de ambiente seguras
+├── vite.config.ts              # Configuração de compilação do Vite
+├── tsconfig.json               # Configurações do compilador TypeScript
+├── src/
+│   ├── main.tsx                # Ponto de entrada React
+│   ├── router.tsx              # Roteamento TanStack Router
+│   ├── routes/                 # Telas e rotas da aplicação
+│   ├── components/             # Componentes de UI (Filtros, Tabelas, Métricas e Chat IA)
+│   └── data/
+│       └── efetivo.json        # Cache local do efetivo (offline fallback)
+└── dist/                       # Build de produção (server.cjs + assets estáticos)
+```
+
+---
+
+## 📡 Endpoints da API REST / API Reference
+
+| Método | Endpoint | Descrição / Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Diagnóstico de integridade do servidor / Server health check. |
+| `POST` | `/api/auth/google` | Validação de credencial JWT / Token Google e checagem na lista VIP. |
+| `GET` | `/api/auth/google/url` | Geração da URL de autenticação Google OAuth 2.0. |
+| `GET` | `/api/verify-auth` | Validação de sessão do usuário logado. |
+| `GET` | `/api/dados` | Dados analíticos do efetivo (cache local com refresh automático a cada 10 min). |
+| `GET` | `/api/drive/sync-status` | Status da sincronização com Google Drive e timestamp do cache. |
+| `POST` | `/api/drive/sync` | Força a sincronização imediata com a base do Google Drive. |
+| `GET` | `/api/database` | Consulta direta à base de dados local JSON. |
+| `POST` | `/api/database` | Atualização da base de dados local JSON. |
+| `POST` | `/api/chat` | Consulta conversacional em linguagem natural via **Google Gemini API**. |
+
+---
+
+## 🔑 Variáveis de Ambiente / Environment Setup (`.env`)
+
+Crie o arquivo `.env` na raiz do projeto com base no modelo `.env.example`:
 
 ```env
-# Porta do servidor (Padrão: 3000)
+# Porta do servidor e Host
 PORT=3000
-
-# URL pública da aplicação ou IP da máquina na rede (ex: http://192.168.1.100:3000)
 APP_URL=http://localhost:3000
 
-# Google OAuth Client ID para autenticação dos usuários no frontend
+# Autenticação Google OAuth 2.0 (Frontend & Backend)
 VITE_GOOGLE_CLIENT_ID=seu-google-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_ID=seu-google-client-id.apps.googleusercontent.com
+ALLOWED_EMAILS=gestor1@casamilitar.pr.gov.br,gestor2@casamilitar.pr.gov.br
 
-# Lista de e-mails autorizados separados por vírgula
-ALLOWED_EMAILS=admin@exemplo.gov.br,usuario@exemplo.gov.br
-
-# Google Drive / Sheets Integration (Service Account)
+# Google Cloud Service Account (Integração Google Drive / Sheets API)
 DRIVE_FILE_ID=SEU_SPREADSHEET_ID_EFETIVO
-GOOGLE_CLIENT_EMAIL=leitor-drive@seu-projeto.iam.gserviceaccount.com
+GOOGLE_CLIENT_EMAIL=sua-service-account@seu-projeto.iam.gserviceaccount.com
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nSUA_CHAVE_PRIVADA_AQUI\n-----END PRIVATE KEY-----\n"
 
-# Gemini API Key (para o assistente IA do painel)
-GEMINI_API_KEY=
+# Inteligência Artificial Generativa
+GEMINI_API_KEY=sua-chave-api-gemini
 ```
 
 ---
 
-## 🚀 Guia de Instalação e Execução (Windows e Linux)
+## 🚀 Instalação e Execução / Getting Started
 
-### Pré-requisitos
-- **Node.js**: Versão 18.0.0 ou superior (recomendado Node.js 20 LTS).
-- **NPM**: Incluído junto com o Node.js.
-
----
-
-### 💻 Passo 1: Clonar/Copiar o Projeto e Instalar Dependências
-
-Abra o terminal (Prompt de Comando / PowerShell no Windows ou Terminal no Linux) e execute:
-
+### 1. Clonar e Instalar Dependências
 ```bash
-cd caminho/para/o/projeto
+git clone https://github.com/alisson-schmidt/Dashboard.git
+cd Dashboard
 npm install
 ```
 
----
-
-### 🛠️ Modo Desenvolvimento
-
-Para rodar com suporte a Hot Reloading e servidor de desenvolvimento:
-
+### 2. Modo Desenvolvimento
 ```bash
 npm run dev
 ```
+Acesse localmente em `http://localhost:3000` ou pelo IP da rede interna `http://<IP_DO_SERVIDOR>:3000`.
 
-Acesse:
-- **Localmente**: `http://localhost:3000`
-- **Na Rede Interna**: `http://<IP_DO_SERVIDOR>:3000`
-
----
-
-### 📦 Modo Produção (Recomendado para Servidores)
-
-#### 1. Gerar o Build de Produção
-O comando de build compila o frontend estático do Vite e empacota o backend Express em um único arquivo CommonJS executável (`dist/server.cjs`):
-
+### 3. Build de Produção
 ```bash
 npm run build
-```
-
-#### 2. Iniciar o Servidor em Produção
-
-```bash
 npm run start
 ```
 
 ---
 
-## 🐧 Configuração como Serviço no Linux (systemd)
+## ⚙️ Execução como Serviço em Servidores Governamentais
 
-Para manter o backend rodando continuamente no Linux:
+### Linux (`systemd`)
+Crie o arquivo `/etc/systemd/system/efetivo-cm.service`:
+```ini
+[Unit]
+Description=Painel do Efetivo Casa Militar - Backend & Frontend
+After=network.target
 
-1. Crie o arquivo `/etc/systemd/system/efetivo-cm.service`:
-   ```ini
-   [Unit]
-   Description=Efetivo Casa Militar - Backend & Frontend
-   After=network.target
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/batalhao-insight
+ExecStart=/usr/bin/node dist/server.cjs
+Restart=always
+Environment=NODE_ENV=production
 
-   [Service]
-   Type=simple
-   User=root
-   WorkingDirectory=/opt/batalhao-insight
-   ExecStart=/usr/bin/node dist/server.cjs
-   Restart=always
-   Environment=NODE_ENV=production
+[Install]
+WantedBy=multi-user.target
+```
+Habilite e inicialize o serviço:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable efetivo-cm
+sudo systemctl start efetivo-cm
+```
 
-   [Install]
-   WantedBy=multi-user.target
-   ```
-2. Ative e inicie o serviço:
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable efetivo-cm
-   sudo systemctl start efetivo-cm
-   ```
-
----
-
-## 🪟 Configuração como Serviço no Windows (NSSM ou PM2)
-
-No Windows Server, você pode usar o **NSSM** (Non-Sucking Service Manager) ou o **PM2**:
-
-### Opção com PM2:
+### Windows Server (via PM2)
 ```cmd
 npm install -g pm2
 pm2 start dist/server.cjs --name "efetivo-cm"
@@ -164,18 +155,14 @@ pm2 startup
 
 ---
 
-## 📡 Endpoints da API REST
+## 👨‍💻 Autor e Arquiteto da Solução / Author
 
-| Método | Endpoint | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/api/health` | Verifica a integridade do servidor. |
-| `POST` | `/api/auth/google` | Autentica a credencial JWT / Token Google e valida o e-mail na lista permitida. |
-| `GET` | `/api/auth/google/url` | Retorna a URL para login OAuth 2.0. |
-| `GET` | `/api/verify-auth` | Valida a sessão do usuário. |
-| `GET` | `/api/dados` | Retorna os dados do efetivo/planilha do Google Drive (usa o cache local com refresh a cada 10 min). |
-| `GET` | `/api/drive/sync-status` | Retorna o status da sincronização com o Google Drive e horário do último cache. |
-| `POST` | `/api/drive/sync` | Força a sincronização imediata com o Google Drive. |
-| `GET` | `/api/database` | Obtém o JSON local da base de dados. |
-| `POST` | `/api/database` | Atualiza a base de dados local. |
-| `POST` | `/api/chat` | Interage com o assistente inteligente alimentado por Gemini AI. |
+**Alisson Schmidt Diniz**  
+*Assessor – Símbolo FCE-13, Divisão Administrativa da Casa Militar da Governadoria do Paraná*  
+*Policial Militar do Estado do Paraná (PMPR)*  
+*Bacharel em Ciências Aeronáuticas | Especialista em Governança de Pessoal e IA*
 
+---
+
+## 📄 Licença / License
+Este projeto é distribuído sob a licença **MIT**. Veja o arquivo `LICENSE` para mais informações.
