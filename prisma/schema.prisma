@@ -1,0 +1,83 @@
+// Prisma Schema for Efetivo CM SQLite Database
+
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model EfetivoMember {
+  id               String   @id @default(uuid())
+  numero           String?  @map("Nº")
+  tipo             String?  @map("TIPO")
+  postoCargo       String?  @map("POSTO_CARGO")
+  qpm              String?  @map("QPM")
+  nome             String   @map("NOME")
+  rg               String?  @map("RG")
+  idMeta4          String?  @map("ID_META4")
+  cpf              String?  @map("CPF")
+  nomeGuerra       String?  @map("NOME_GUERRA")
+  dataInclusao     String?  @map("DATA_INCLUSAO")
+  divisao          String?  @map("DIVISAO")
+  siglaDivisao     String?  @map("SIGLA_DIVISAO")
+  afastamentos     String?  @map("AFASTAMENTOS")
+  abonoPermanencia String?  @map("ABONO_PERMANENCIA")
+  dataNascimento   String?  @map("DATA_NASCIMENTO")
+  alertaAniversario String? @map("ALERTA_ANIVERSARIO")
+  idade            String?  @map("IDADE")
+  genero           String?  @map("GENERO")
+  fppFce           String?  @map("FPP_FCE")
+  valor            Float?   @map("VALOR")
+  tipoFppFg        String?  @map("TIPO_FPP_FG")
+  compulsoriaIdade String?  @map("COMPULSORIA_IDADE")
+  compulsoriaTempo String?  @map("COMPULSORIA_TEMPO")
+  encaminharOficio String?  @map("ENCAMINHAR_OFICIO")
+  mandarOficio     String?  @map("MANDAR_OFICIO")
+  dataApresentacao String?  @map("DATA_APRESENTACAO")
+  atoTransferencia String?  @map("ATO_TRANSFERENCIA")
+  protocoloApres   String?  @map("PROTOCOLO_APRES")
+  email            String?  @map("EMAIL")
+  telefone         String?  @map("TELEFONE")
+  endereco         String?  @map("ENDERECO")
+  rawJson          String   // Complete raw JSON string representation for fast loss-free queries
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+
+  @@index([nome])
+  @@index([cpf])
+  @@index([rg])
+  @@index([siglaDivisao])
+}
+
+model DriveSyncMetadata {
+  id             String    @id @default("default")
+  fileId         String
+  fileName       String?
+  mimeType       String?
+  driveModifiedTime String?
+  lastSyncedAt   DateTime  @default(now())
+  status         String    // "success", "syncing", "error", "skipped"
+  totalRows      Int       @default(0)
+  errorMessage   String?
+  updatedAt      DateTime  @updatedAt
+}
+
+model AuthorizedUser {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("user")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model BackupLog {
+  id         String   @id @default(uuid())
+  filename   String
+  filepath   String
+  sizeBytes  BigInt
+  createdAt  DateTime @default(now())
+  status     String   // "success" | "failed"
+}

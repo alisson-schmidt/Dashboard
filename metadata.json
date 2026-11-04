@@ -1,0 +1,6 @@
+{
+  "name": "Batalhão Insight",
+  "description": "Sistema de Gestão, Controle de Efetivo e Controle de Férias da Casa Militar",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
