@@ -160,7 +160,7 @@ pm2 startup
 **Alisson Schmidt Diniz**  
 *Assessor – Símbolo FCE-13, Divisão Administrativa da Casa Militar da Governadoria do Paraná*  
 *Policial Militar do Estado do Paraná (PMPR)*  
-*Bacharel em Ciências Aeronáuticas | Especialista em Governança de Pessoal e IA*
+*Especialista em Governança de Pessoal e IA*
 
 ---
 
