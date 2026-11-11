@@ -2,6 +2,12 @@ Public Safety Workforce Governance & Tactical Readiness Dashboard
 
 Painel de Gestão e Análise Operacional do Efetivo — Casa Militar da Governadoria
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Frontend: React 19](https://img.shields.io/badge/Frontend-React%2019%20%7C%20Vite%20%7C%20Tailwind-blue)
+![Backend: Node.js Express](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express%20%7C%20TypeScript-green)
+![Cloud & APIs: Google Cloud](https://img.shields.io/badge/Integrations-Google%20Drive%20%26%20Sheets%20API-orange)
+![AI Engine: Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini%20API-blueviolet)
+
 📌 Visão Geral / Executive Overview
 
 EN: A full-stack, client-server web application and analytics platform engineered for strategic personnel management, tactical readiness tracking, operational shift governance, and automated shift schedule management (Escalas) at the Military House (Casa Militar) of the State Government of Paraná. Powered by React 19, Node.js/Express, Google Workspace APIs, and Google Gemini AI, the system streamlines troop readiness, enables rapid shift generation with instant WhatsApp/email sharing, clean Excel exports, and conversational data intelligence.
@@ -211,13 +217,7 @@ pm2 startup
 
 👨‍💻 Autor e Arquiteto da Solução / Author
 
-Alisson Schmidt Diniz
-
-Assessor – Símbolo FCE-13, Divisão Administrativa da Casa Militar da Governadoria do Paraná
-
-Policial Militar do Estado do Paraná (PMPR)
-
-Especialista em Governança de Pessoal e IA
+Alisson Schmidt DinizAssessor – Símbolo FCE-13, Divisão Administrativa da Casa Militar da Governadoria do ParanáPolicial Militar do Estado do Paraná (PMPR)Especialista em Governança de Pessoal e IA
 
 📄 Licença / License
 
