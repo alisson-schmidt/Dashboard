@@ -141,7 +141,7 @@ export async function syncFeriasFromGoogleSheets(): Promise<{
 }> {
   // If spreadsheet ID is a placeholder, retain local data
   if (!SPREADSHEET_FERIAS_ID || SPREADSHEET_FERIAS_ID.includes("SEU_") || SPREADSHEET_FERIAS_ID.includes("EXEMPLO")) {
-    const existing = getFeriasMembers();
+    const existing = await getFeriasMembers();
     return {
       success: true,
       total: existing.length,

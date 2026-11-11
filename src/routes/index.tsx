@@ -24,6 +24,10 @@ import {
   EyeOff,
   AlertCircle,
   Users,
+  Clock,
+  ChevronDown,
+  Plus,
+  Share2,
 } from "lucide-react";
 import { toast } from "sonner";
 import data from "@/data/efetivo.json";
@@ -31,6 +35,7 @@ import { ThemeToggle, useTheme } from "@/context/ThemeContext";
 import { GoogleSheetsModal } from "@/components/GoogleSheetsModal";
 import { FeriasView } from "@/components/FeriasView";
 import { FeriasCivisView } from "@/components/FeriasCivisView";
+import { EscalasView } from "@/components/EscalasView";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -676,7 +681,9 @@ export function Dashboard() {
       .catch(() => {});
   }, []);
 
-  const [activeNav, setActiveNav] = useState<"home" | "ferias" | "ferias_civis">("home");
+  const [activeNav, setActiveNav] = useState<"home" | "ferias" | "ferias_civis" | "escalas">("home");
+  const [isEscalasExpanded, setIsEscalasExpanded] = useState<boolean>(true);
+  const [activeEscalaSubTab, setActiveEscalaSubTab] = useState<"cadastrar" | "preview" | "exportar">("cadastrar");
   const [search, setSearch] = useState("");
   const [divisao, setDivisao] = useState<string>("__all");
   const [posto, setPosto] = useState<string>("__all");
@@ -1434,6 +1441,20 @@ export function Dashboard() {
     dataApresentacaoFiltro !== "__all" ||
     dataAniversarioFiltro !== "__all";
 
+  if (activeNav === "escalas") {
+    return (
+      <EscalasView
+        onNavigateHome={() => setActiveNav("home")}
+        onNavigateFerias={() => setActiveNav("ferias")}
+        onNavigateFeriasCivis={() => setActiveNav("ferias_civis")}
+        activeSubTab={activeEscalaSubTab}
+        onSubTabChange={(sub) => setActiveEscalaSubTab(sub)}
+        efetivoTotalCM={dbData["EFETIVO TOTAL CM"] || efetivo}
+        authUser={authUser}
+      />
+    );
+  }
+
   if (activeNav === "ferias") {
     return (
       <>
@@ -1441,6 +1462,10 @@ export function Dashboard() {
           onOpenSheetsModal={() => setIsSheetsModalOpen(true)}
           onNavigateHome={() => setActiveNav("home")}
           onNavigateFeriasCivis={() => setActiveNav("ferias_civis")}
+          onNavigateEscalas={(sub) => {
+            setActiveNav("escalas");
+            if (sub) setActiveEscalaSubTab(sub);
+          }}
           authUser={authUser}
         />
         <GoogleSheetsModal
@@ -1458,6 +1483,10 @@ export function Dashboard() {
       <FeriasCivisView
         onNavigateHome={() => setActiveNav("home")}
         onNavigateFerias={() => setActiveNav("ferias")}
+        onNavigateEscalas={(sub) => {
+          setActiveNav("escalas");
+          if (sub) setActiveEscalaSubTab(sub);
+        }}
         authUser={authUser}
       />
     );
@@ -1518,6 +1547,85 @@ export function Dashboard() {
             <Home className={`w-4 h-4 ${isLight ? "text-blue-600" : "text-[#3b82f6]"}`} />
             <span>Home</span>
           </button>
+
+          {/* Item expansível: Escalas (posicionado diretamente abaixo do botão Home) */}
+          <div className="flex flex-col rounded-xs overflow-hidden transition-all duration-200">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveNav("escalas");
+                setIsEscalasExpanded((prev) => !prev);
+              }}
+              className={`nav-item flex items-center justify-between px-3 py-2.5 rounded-xs text-xs font-medium border border-transparent transition-all w-full text-left cursor-pointer ${
+                isLight
+                  ? "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
+                  : "text-[#ececed]/70 hover:text-[#ececed] hover:bg-[#ececed]/5"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Clock className={`w-4 h-4 ${isLight ? "text-slate-500" : "text-[#ececed]/60"}`} />
+                <span>Escalas</span>
+              </div>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  isEscalasExpanded ? "rotate-180" : "rotate-0"
+                }`}
+              />
+            </button>
+
+            {/* Sub-opções do Accordion */}
+            {isEscalasExpanded && (
+              <div className="flex flex-col gap-1 pl-4 pr-1 py-1 mt-1 border-l-2 ml-4 border-blue-500/25">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveNav("escalas");
+                    setActiveEscalaSubTab("cadastrar");
+                  }}
+                  className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xs text-[11px] font-medium transition-all text-left cursor-pointer ${
+                    isLight
+                      ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                      : "text-[#ececed]/60 hover:text-[#ececed] hover:bg-[#ececed]/5"
+                  }`}
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>Cadastrar Escala</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveNav("escalas");
+                    setActiveEscalaSubTab("preview");
+                  }}
+                  className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xs text-[11px] font-medium transition-all text-left cursor-pointer ${
+                    isLight
+                      ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                      : "text-[#ececed]/60 hover:text-[#ececed] hover:bg-[#ececed]/5"
+                  }`}
+                >
+                  <Share2 className="w-3 h-3" />
+                  <span>Preview e Compartilhamento</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveNav("escalas");
+                    setActiveEscalaSubTab("exportar");
+                  }}
+                  className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xs text-[11px] font-medium transition-all text-left cursor-pointer ${
+                    isLight
+                      ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                      : "text-[#ececed]/60 hover:text-[#ececed] hover:bg-[#ececed]/5"
+                  }`}
+                >
+                  <FileSpreadsheet className="w-3 h-3" />
+                  <span>Exportar Excel</span>
+                </button>
+              </div>
+            )}
+          </div>
           <button
             type="button"
             onClick={() => setActiveNav("ferias")}

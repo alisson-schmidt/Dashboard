@@ -8,6 +8,10 @@ import {
   FileSpreadsheet,
   CheckCircle2,
   Users,
+  Clock,
+  ChevronDown,
+  Plus,
+  Share2,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -236,15 +240,18 @@ export function FeriasView({
   onOpenSheetsModal,
   onNavigateHome,
   onNavigateFeriasCivis,
+  onNavigateEscalas,
   authUser,
 }: {
   onOpenSheetsModal?: () => void;
   onNavigateHome?: () => void;
   onNavigateFeriasCivis?: () => void;
+  onNavigateEscalas?: (subTab?: "cadastrar" | "preview" | "exportar") => void;
   authUser?: { email: string; name: string; picture?: string; role?: "ADMINISTRADOR" | "VISUALIZADOR" };
 }) {
   const { theme } = useTheme();
   const isLight = theme === "light";
+  const [isEscalasExpanded, setIsEscalasExpanded] = useState(false);
 
   const [rows, setRows] = useState<FeriasRow[]>(initialRows);
   const [search, setSearch] = useState("");
@@ -499,6 +506,75 @@ export function FeriasView({
             <Home className={`w-4 h-4 ${isLight ? "text-slate-500" : "text-[#ececed]/60"}`} />
             <span>Home</span>
           </button>
+
+          {/* Item expansível: Escalas */}
+          {onNavigateEscalas && (
+            <div className="flex flex-col rounded-xs overflow-hidden transition-all duration-200">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEscalasExpanded((prev) => !prev);
+                  onNavigateEscalas("cadastrar");
+                }}
+                className={`nav-item flex items-center justify-between px-3 py-2.5 rounded-xs text-xs font-medium border border-transparent transition-all w-full text-left cursor-pointer ${
+                  isLight
+                    ? "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
+                    : "text-[#ececed]/70 hover:text-[#ececed] hover:bg-[#ececed]/5"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Clock className={`w-4 h-4 ${isLight ? "text-slate-500" : "text-[#ececed]/60"}`} />
+                  <span>Escalas</span>
+                </div>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    isEscalasExpanded ? "rotate-180" : "rotate-0"
+                  }`}
+                />
+              </button>
+
+              {isEscalasExpanded && (
+                <div className="flex flex-col gap-1 pl-4 pr-1 py-1 mt-1 border-l-2 ml-4 border-blue-500/25">
+                  <button
+                    type="button"
+                    onClick={() => onNavigateEscalas("cadastrar")}
+                    className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xs text-[11px] font-medium transition-all text-left cursor-pointer ${
+                      isLight
+                        ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                        : "text-[#ececed]/60 hover:text-[#ececed] hover:bg-[#ececed]/5"
+                    }`}
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>Cadastrar Escala</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onNavigateEscalas("preview")}
+                    className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xs text-[11px] font-medium transition-all text-left cursor-pointer ${
+                      isLight
+                        ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                        : "text-[#ececed]/60 hover:text-[#ececed] hover:bg-[#ececed]/5"
+                    }`}
+                  >
+                    <Share2 className="w-3 h-3" />
+                    <span>Preview e Compartilhamento</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onNavigateEscalas("exportar")}
+                    className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xs text-[11px] font-medium transition-all text-left cursor-pointer ${
+                      isLight
+                        ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                        : "text-[#ececed]/60 hover:text-[#ececed] hover:bg-[#ececed]/5"
+                    }`}
+                  >
+                    <FileSpreadsheet className="w-3 h-3" />
+                    <span>Exportar Excel</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           <button
             type="button"

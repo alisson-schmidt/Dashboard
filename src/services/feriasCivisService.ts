@@ -175,7 +175,7 @@ export async function syncFeriasCivisFromGoogleSheets(): Promise<{
 
   // If spreadsheet ID is a placeholder, retain local data
   if (!spreadsheetId || spreadsheetId.includes("SEU_") || spreadsheetId.includes("EXEMPLO")) {
-    const existing = getFeriasCivisMembers();
+    const existing = await getFeriasCivisMembers();
     return {
       success: true,
       total: existing.length,
